@@ -1,6 +1,6 @@
 runner:
   name: AlterX
-  description: Generate subdomain worlists.
+  description: Wordlist generator.
   version: 0.0.1
 
 build:
