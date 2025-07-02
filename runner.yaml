@@ -22,7 +22,7 @@ build:
 
 webform:
   - name: subdomain
-    prompt: URL
+    prompt: SUBDOMAIN
     type: text
 
 launch:
