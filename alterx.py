@@ -7,36 +7,36 @@ from pathlib import Path
 from datetime import datetime
 
 def main():
-    """Entry point: Validate input, check dependencies, run scan, and handle results."""
+    """Entry point: Validate input, check dependencies, run wordlist generation, and handle results."""
     if len(sys.argv) < 2:
-        print("[!] Error: Please provide a url to scan")
-        print("Usage: python3 katana.py example.com")
+        print("[!] Error: Please provide a subdomain for wordlist generation")
+        print("Usage: python3 alterx.py example.com")
         sys.exit(1)
     
-    url = sys.argv[1]
+    subdomain = sys.argv[1]
 
-    if not check_katana_installed():
-        print("[!] Error: katana is not installed or not in PATH")
-        print("Please install katana first: https://katana.projectdiscovery.io/katana/get-started/")
+    if not check_alterx_installed():
+        print("[!] Error: alterx is not installed or not in PATH")
+        print("Please install alterx first: https://alterx.projectdiscovery.io/alterx/get-started/")
         sys.exit(1)
     
     activate_venv()
     
-    print(f"[*] Starting katana url scan for: {url}")
-    exit_code = run_katana_scan_and_save(url)
+    print(f"[*] Starting alterx subdomain wordlist generation for: {subdomain}")
+    exit_code = run_alterx_wordlist_generation_and_save(subdomain)
     
     if exit_code == 0:
-        print("[+] Scan completed successfully")
+        print("[+] wordlist generation completed successfully")
     else:
-        print("[!] Scan completed with errors or warnings")
+        print("[!] wordlist generation completed with errors or warnings")
     
     sys.exit(exit_code)
 
-def check_katana_installed():
-    """Return True if katana is installed and available in PATH."""
+def check_alterx_installed():
+    """Return True if alterx is installed and available in PATH."""
     try:
         result = subprocess.run(
-            ["/go/bin/katana", "-version"],
+            ["/go/bin/alterx", "-version"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
@@ -57,34 +57,34 @@ def activate_venv():
         else:
             print("[*] Virtual environment found but Python not detected")
 
-def run_katana_scan_and_save(url):
-    """Run katana scan and save results to a timestamped file."""
+def run_alterx_wordlist_generation_and_save(subdomain):
+    """Run alterx wordlist generation and save results to a timestamped file."""
     try:
-        scan_output = run_katana_scan(url)
-        if scan_output is None:
-            print("[!] katana scan failed or returned no output")
+        wordlist_generation_output = run_alterx_wordlist_generation(subdomain)
+        if wordlist_generation_output is None:
+            print("[!] alterx wordlist generation failed or returned no output")
             return 1
         
         output_dir = "outputs"
         os.makedirs(output_dir, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
-        filename = f"{timestamp}-scan.txt"
+        filename = f"{timestamp}-wordlist generation.txt"
         filepath = os.path.join(output_dir, filename)
 
         with open(filepath, "w") as f:
-            f.write(scan_output)
-        print(f"[*] Scan results saved as {filepath}")
+            f.write(wordlist_generation_output)
+        print(f"[*] wordlist generation results saved as {filepath}")
         return 0
 
     except Exception as e:
-        print(f"[!] Error running scan: {e}", file=sys.stderr)
+        print(f"[!] Error running wordlist generation: {e}", file=sys.stderr)
         return 1
 
-def run_katana_scan(url):
-    """Run katana scan on the given url and return its output as a string, or None on error."""
+def run_alterx_wordlist generation(subdomain):
+    """Run alterx wordlist generation on the given subdomain and return its output as a string, or None on error."""
     command = [
-        "/go/bin/katana",
-        "-u", url,
+        "/go/bin/alterx",
+        "-l", subdomain,
         "-silent"
     ]
     print(f"[*] Executing: {' '.join(command)}")
@@ -98,25 +98,25 @@ def run_katana_scan(url):
             check=False
         )
         if result.returncode == -9:
-            print("[!] Warning: katana process was killed by SIGKILL (likely due to memory/resource limits)")
+            print("[!] Warning: alterx process was killed by SIGKILL (likely due to memory/resource limits)")
             if result.stdout.strip():
                 return result.stdout
             return None
         if result.returncode != 0:
-            print(f"[!] katana exited with code {result.returncode}")
+            print(f"[!] alterx exited with code {result.returncode}")
             if result.stderr:
-                print("katana error output:")
+                print("alterx error output:")
                 print(result.stderr)
             return result.stdout if result.stdout.strip() else None
         return result.stdout
     except subprocess.TimeoutExpired:
-        print("[!] katana scan timed out")
+        print("[!] alterx wordlist generation timed out")
         return None
     except FileNotFoundError:
-        print("[!] Error: katana command not found. Please ensure katana is installed and in PATH")
+        print("[!] Error: alterx command not found. Please ensure alterx is installed and in PATH")
         return None
     except Exception as e:
-        print(f"[!] Unexpected error running katana: {e}")
+        print(f"[!] Unexpected error running alterx: {e}")
         return None
 
 if __name__ == "__main__":
