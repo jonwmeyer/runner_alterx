@@ -1,5 +1,5 @@
 #!/bin/bash
-    echo "START: Building Katana"
+    echo "START: Building Alterx"
     apt update
     apt install -y build-essential ca-certificates wget unzip git
     apt install -y python3 python3-pip python-is-python3
@@ -11,5 +11,5 @@
     ENV CGO_ENABLED=1
     mkdir -p /go/src
     mkdir -p /go/bin
-    cd /tmp && go install github.com/projectdiscovery/katana/cmd/katana@latest
-    echo "END: Building httpx"
+    go install github.com/projectdiscovery/alterx/cmd/alterx@latest
+    echo "END: Building Alterx"
