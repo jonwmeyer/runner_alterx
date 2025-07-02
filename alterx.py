@@ -78,7 +78,7 @@ def run_alterx_wordlist_generation_and_save(subdomain):
 
     except Exception as e:
         print(f"[!] Error running wordlist generation: {e}", file=sys.stderr)
-        return 1
+        return 1 
 
 def run_alterx_wordlist_generation(subdomain):
     """Run alterx wordlist generation on the given subdomain and return its output as a string, or None on error."""
